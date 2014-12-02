@@ -1,0 +1,4 @@
+kev_platform:
+    resource: "@KevPlatformBundle/Resources/config/routing.yml"
+    prefix:   /platform
+

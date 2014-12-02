@@ -1,0 +1,27 @@
+kev_platform_home:
+    path:     /{page}
+    defaults: { _controller: KevPlatformBundle:Advert:index, page: 1 }
+    requirements:
+        date: \d*
+
+kev_platform_view:
+    path:     /advert/{id}
+    defaults: { _controller: KevPlatformBundle:Advert:view }
+    requirements:
+        id: \d+
+
+kev_platform_add:
+    path:      /add/add
+    defaults:  { _controller: KevPlatformBundle:Advert:add }
+
+kev_platform_edit:
+    path:      /edit/{id}
+    defaults:  { _controller: KevPlatformBundle:Advert:edit }
+    requirements:
+        id: \d+
+
+kev_platform_delete:
+    path:      /delete/{id}
+    defaults:  { _controller: KevPlatformBundle:Advert:delete }
+    requirements:
+        id: \d+
