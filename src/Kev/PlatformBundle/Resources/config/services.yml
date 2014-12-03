@@ -1,4 +1,6 @@
+# src/Kev/PlatformBundle/Resources/config/services.yml
+
 services:
-#    kev_platform.example:
-#        class: Kev\PlatformBundle\Example
-#        arguments: [@service_id, "plain_value", %parameter%]
+    kev_platform.antispam:
+        class:     Kev\PlatformBundle\Antispam\KevAntispam
+        arguments: [@mailer, %locale%, 50]
