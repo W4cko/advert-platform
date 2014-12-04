@@ -4,9 +4,13 @@
 
 namespace Kev\PlatformBundle\Controller;
 
+use Kev\PlatformBundle\Entity\Application;
+use Kev\PlatformBundle\Entity\Image;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Kev\PlatformBundle\Entity\Advert;
+
 
 class AdvertController extends Controller
 {
@@ -42,28 +46,62 @@ class AdvertController extends Controller
 
     public function viewAction($id)
     {
-        $advert = array(
-            'title'   => 'Recherche développpeur Symfony2',
-            'id'      => $id,
-            'author'  => 'Alexandre',
-            'content' => 'Nous recherchons un développeur Symfony2 débutant sur Lyon. Blabla…',
-            'date'    => new \Datetime()
-        );
+        $repository = $this->getDoctrine()->getManager()->getRepository('KevPlatformBundle:Advert');
+
+        $advert = $repository->find($id);
+
+        if (null === $advert){
+            throw new NotFoundHttpException("L'annonce demandée (".$id.")n'existe pas");
+        }
+        $em = $this->getDoctrine()->getManager();
+        $listApplications = $em->getRepository('KevPlatformBundle:Application')->findBy(array('advert' => $advert));
 
         return $this->render('KevPlatformBundle:Advert:view.html.twig', array(
-            'advert' => $advert
+            'advert' => $advert, 'listApplications' => $listApplications
         ));
     }
 
     public function addAction(Request $request)
     {
+
+        // Ajout annonce
+        $advert = new Advert();
+        $advert->setTitle('RechercheVomi');
+        $advert->setAuthor('Kevv');
+        $advert->setContent("Nous recherchons un développeur Symfony2 débutant sur Lyon BLA");
+        $date = new \DateTime();
+        $advert->setDate($date);
+
+        // ajout image
+        $image = new Image();
+        $image->setUrl('http://sdz-upload.s3.amazonaws.com/prod/upload/job-de-reve.jpg');
+        $image->setAlt('Job de rêve');
+        $advert->setImage($image);
+
+        // Ajout de 2 candidatures
+        $application1 = new Application();
+        $application1->setAuthor('Veutjob');
+        $application1->setAdvert($advert);
+        $application1->setContent('Je veut ce boulot putin :p');
+        $application2 = new Application();
+        $application2->setAuthor('Veutjob2');
+        $application2->setAdvert($advert);
+        $application2->setContent('Je veut ce boulot putin :p');
+
+
+        // Entity manager
+        $em = $this->getDoctrine()->getManager();
+
+        $em->persist($advert);
+        $em->persist($application2);
+        $em->persist($application1);
+
+
+        $em->flush();
+
         if ($request->isMethod('POST')) {
-            // Ici, on s'occupera de la création et de la gestion du formulaire
-
             $request->getSession()->getFlashBag()->add('notice', 'Annonce bien enregistrée.');
-
-            // Puis on redirige vers la page de visualisation de cette annonce
-            return $this->redirect($this->generateUrl('kev_platform_add', array('id' => 5)));
+            return $this->redirect($this->generateUrl('kev_platform_add', array('id' => $advert->getId())));
         }
 
         // Si on n'est pas en POST, alors on affiche le formulaire
@@ -86,6 +124,9 @@ class AdvertController extends Controller
             'content' => 'Nous recherchons un développeur Symfony2 débutant sur Lyon. Blabla…',
             'date'    => new \Datetime()
         );
+
+        $em = $this->getDoctrine()->getManager();
+
 
         return $this->render('KevPlatformBundle:Advert:edit.html.twig',array(
         'advert' => $advert));

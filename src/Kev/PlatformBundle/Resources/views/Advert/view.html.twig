@@ -11,10 +11,23 @@
     <h2>{{ advert.title }}</h2>
     <i>Par {{ advert.author }}, le {{ advert.date|date('d/m/Y') }}</i>
 
+    {% if advert.image is not null %}
+        <img src="{{ advert.image.url }}" alt="{{ advert.image.alt }}">
+    {% endif %}
     <div class="well">
         {{ advert.content }}
     </div>
 
+    {% if listApplications is not null %}
+        <h2>
+            Canditatures
+        </h2>
+        <ul id="applications">
+            {% for item in listApplications %}
+                <li>{{ item.author }} le  {{ item.date|date('d/m/Y') }} </li>
+            {% endfor %}
+        </ul>
+    {% endif %}
     <p>
         <a href="{{ path('kev_platform_home') }}" class="btn btn-default">
             <i class="glyphicon glyphicon-chevron-left"></i>
