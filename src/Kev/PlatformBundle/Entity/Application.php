@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping as ORM;
 class Application
 {
     /**
-     * @var integer
+     * @var INTEGER
      *
      * @ORM\Column(name="id", type="integer")
      * @ORM\Id

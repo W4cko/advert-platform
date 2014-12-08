@@ -20,26 +20,8 @@ class AdvertController extends Controller
             throw new NotFoundHttpException('Page "'.$page.'" inexistante.');
         }
 
-        $listAdverts = array(
-            array(
-                'title'   => 'Recherche développpeur Symfony2',
-                'id'      => 1,
-                'author'  => 'Alexandre',
-                'content' => 'Nous recherchons un développeur Symfony2 débutant sur Lyon. Blabla…',
-                'date'    => new \Datetime()),
-            array(
-                'title'   => 'Mission de webmaster',
-                'id'      => 2,
-                'author'  => 'Hugo',
-                'content' => 'Nous recherchons un webmaster capable de maintenir notre site internet. Blabla…',
-                'date'    => new \Datetime()),
-            array(
-                'title'   => 'Offre de stage webdesigner',
-                'id'      => 3,
-                'author'  => 'Mathieu',
-                'content' => 'Nous proposons un poste pour webdesigner. Blabla…',
-                'date'    => new \Datetime())
-        );
+        $em = $this->getDoctrine()->getManager();
+        $listAdverts = $em->getRepository('KevPlatformBundle:Advert')->findAll();
 
         return $this->render('KevPlatformBundle:Advert:index.html.twig', array('listAdverts' => $listAdverts));
     }
@@ -88,14 +70,12 @@ class AdvertController extends Controller
         $application2->setAdvert($advert);
         $application2->setContent('Je veut ce boulot putin :p');
 
-
         // Entity manager
         $em = $this->getDoctrine()->getManager();
 
         $em->persist($advert);
         $em->persist($application2);
         $em->persist($application1);
-
 
         $em->flush();
 
@@ -110,47 +90,57 @@ class AdvertController extends Controller
 
     public function editAction($id, Request $request)
     {
-        // Même mécanisme que pour l'ajout
+        $em = $this->getDoctrine()->getManager();
+
+        $advert = $em->getRepository('KevPlatformBundle:Advert')->find($id);
+
+        if (null === $advert) {
+            throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
+        }
+
+        $listCategories = $em->getRepository('KevPlatformBundle:Category')->findAll();
+
+        foreach ($listCategories as $category) {
+            $advert->addCategory($category);
+        }
+
+        $em->flush();
+
         if ($request->isMethod('POST')) {
             $request->getSession()->getFlashBag()->add('notice', 'Annonce bien modifiée.');
 
-            return $this->redirect($this->generateUrl('oc_platform_view', array('id' => 5)));
+            return $this->redirect($this->generateUrl('oc_platform_view'));
         }
 
-        $advert = array(
-            'title'   => 'Recherche développpeur Symfony2',
-            'id'      => $id,
-            'author'  => 'Alexandre',
-            'content' => 'Nous recherchons un développeur Symfony2 débutant sur Lyon. Blabla…',
-            'date'    => new \Datetime()
-        );
-
-        $em = $this->getDoctrine()->getManager();
-
-
         return $this->render('KevPlatformBundle:Advert:edit.html.twig',array(
-        'advert' => $advert));
+        'advert' => $advert,'id' => $id));
     }
 
     public function deleteAction($id)
     {
-        return $this->render('KevPlatformBundle:Advert:delete.html.twig');
+        $em = $this->getDoctrine()->getManager();
+
+        $advert = $em->getRepository('KevPlatformBundle:Advert')->find($id);
+
+        if (null === $advert) {
+            throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
+        }
+
+        foreach ($advert->getCategories() as $category) {
+            $advert->removeCategory($category);
+        }
+
+        $em->flush();
+
+        return $this->render('KevPlatformBundle:Advert:edit.html.twig',array(
+            'advert' => $advert,'id' => $id));
     }
 
     public function menuAction()
     {
-        // On fixe en dur une liste ici, bien entendu par la suite
-        // on la récupérera depuis la BDD !
-        $listAdverts = array(
-            array('id' => 2, 'title' => 'Recherche développeur Symfony2'),
-            array('id' => 5, 'title' => 'Mission de webmaster'),
-            array('id' => 9, 'title' => 'Offre de stage webdesigner')
-        );
+        $em = $this->getDoctrine()->getManager();
+        $listAdverts = $em->getRepository('KevPlatformBundle:Advert')->findAll();
 
-        return $this->render('KevPlatformBundle:Advert:menu.html.twig', array(
-            // Tout l'intérêt est ici : le contrôleur passe
-            // les variables nécessaires au template !
-            'listAdverts' => $listAdverts
-        ));
+        return $this->render('KevPlatformBundle:Advert:menu.html.twig', array('listAdverts' => $listAdverts));
     }
 }

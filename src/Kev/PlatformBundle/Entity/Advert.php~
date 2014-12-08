@@ -2,6 +2,7 @@
 
 namespace Kev\PlatformBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -32,8 +33,11 @@ class Advert
      * @ORM\OneToOne(targetEntity="Kev\PlatformBundle\Entity\Image", cascade={"persist"})
      *
      */
-
     private $image;
+    /**
+     * @ORM\ManyToMany(targetEntity="Kev\PlatformBundle\Entity\Category", cascade={"persist"})
+     */
+    private $categories;
 
     /**
      * @var string
@@ -203,5 +207,45 @@ class Advert
     public function getImage()
     {
         return $this->image;
+    }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->categories = new ArrayCollection();
+    }
+
+    /**
+     * Add categories
+     *
+     * @param Category $categories
+     * @return Advert
+     */
+    public function addCategory(Category $categories)
+    {
+        $this->categories[] = $categories;
+
+        return $this;
+    }
+
+    /**
+     * Remove categories
+     *
+     * @param Category $categories
+     */
+    public function removeCategory(Category $categories)
+    {
+        $this->categories->removeElement($categories);
+    }
+
+    /**
+     * Get categories
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getCategories()
+    {
+        return $this->categories;
     }
 }
