@@ -4,6 +4,7 @@
 
 namespace Kev\PlatformBundle\Controller;
 
+use Kev\PlatformBundle\Entity\AdvertSkill;
 use Kev\PlatformBundle\Entity\Application;
 use Kev\PlatformBundle\Entity\Image;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -37,9 +38,11 @@ class AdvertController extends Controller
         }
         $em = $this->getDoctrine()->getManager();
         $listApplications = $em->getRepository('KevPlatformBundle:Application')->findBy(array('advert' => $advert));
+        // Horrible car on fait une requete par iteration, methode pour l'exemple...
+        $listAdvertSkills = $em->getRepository('KevPlatformBundle:AdvertSkill')->findBy(array('advert' => $advert));
 
         return $this->render('KevPlatformBundle:Advert:view.html.twig', array(
-            'advert' => $advert, 'listApplications' => $listApplications
+            'advert' => $advert, 'listApplications' => $listApplications, 'listAdvertSkills' => $listAdvertSkills
         ));
     }
 
@@ -48,7 +51,7 @@ class AdvertController extends Controller
 
         // Ajout annonce
         $advert = new Advert();
-        $advert->setTitle('RechercheVomi');
+        $advert->setTitle('Recherchejobbb');
         $advert->setAuthor('Kevv');
         $advert->setContent("Nous recherchons un développeur Symfony2 débutant sur Lyon BLA");
         $date = new \DateTime();
@@ -60,15 +63,29 @@ class AdvertController extends Controller
         $image->setAlt('Job de rêve');
         $advert->setImage($image);
 
+        // Ajout skills
+        $em = $this->getDoctrine()->getManager();
+
+        $listSkills = $em->getRepository('KevPlatformBundle:Skill')->findAll();
+        foreach ($listSkills as $skill) {
+            $advertSkill = new AdvertSkill();
+            $advertSkill->setAdvert($advert);
+            $advertSkill->setSkill($skill);
+            $advertSkill->setLevel('Expert');
+            $em->persist($advertSkill);
+
+        }
+
+
         // Ajout de 2 candidatures
         $application1 = new Application();
         $application1->setAuthor('Veutjob');
         $application1->setAdvert($advert);
-        $application1->setContent('Je veut ce boulot putin :p');
+        $application1->setContent('Je veut ce boulot xd :p');
         $application2 = new Application();
         $application2->setAuthor('Veutjob2');
         $application2->setAdvert($advert);
-        $application2->setContent('Je veut ce boulot putin :p');
+        $application2->setContent('Je veut ce boulot :p');
 
         // Entity manager
         $em = $this->getDoctrine()->getManager();

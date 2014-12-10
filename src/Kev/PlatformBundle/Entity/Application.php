@@ -22,7 +22,7 @@ class Application
     private $id;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Kev\PlatformBundle\Entity\Advert")
+     * @ORM\ManyToOne(targetEntity="Kev\PlatformBundle\Entity\Advert", inversedBy="applications")
      * @ORM\JoinColumn(nullable=false)
      */
     private $advert;

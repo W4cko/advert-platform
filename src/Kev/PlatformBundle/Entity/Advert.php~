@@ -40,6 +40,11 @@ class Advert
     private $categories;
 
     /**
+     * @ORM\OneToMany(targetEntity="Kev\PlatformBundle\Entity\Application", mappedBy="advert")*
+     */
+    private $applications;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="title", type="string", length=255)

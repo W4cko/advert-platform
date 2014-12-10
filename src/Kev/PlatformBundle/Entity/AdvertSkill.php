@@ -81,7 +81,7 @@ class AdvertSkill
      * @param \Kev\PlatformBundle\Entity\Advert $advert
      * @return AdvertSkill
      */
-    public function setAdvert(\Kev\PlatformBundle\Entity\Advert $advert)
+    public function setAdvert(Advert $advert)
     {
         $this->advert = $advert;
 
@@ -104,7 +104,7 @@ class AdvertSkill
      * @param \Kev\PlatformBundle\Entity\Skill $skill
      * @return AdvertSkill
      */
-    public function setSkill(\Kev\PlatformBundle\Entity\Skill $skill)
+    public function setSkill(Skill $skill)
     {
         $this->skill = $skill;
 

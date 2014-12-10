@@ -40,6 +40,11 @@ class Advert
     private $categories;
 
     /**
+     * @ORM\OneToMany(targetEntity="Kev\PlatformBundle\Entity\Application", mappedBy="advert")*
+     */
+    private $applications;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="title", type="string", length=255)
@@ -247,5 +252,38 @@ class Advert
     public function getCategories()
     {
         return $this->categories;
+    }
+
+    /**
+     * Add applications
+     *
+     * @param \Kev\PlatformBundle\Entity\Application $application
+     * @return Advert
+     */
+    public function addApplication(Application $application)
+    {
+        $this->application[] = $application;
+        $application->setAdvert($this);
+        return $this;
+    }
+
+    /**
+     * Remove applications
+     *
+     * @param \Kev\PlatformBundle\Entity\Application $applications
+     */
+    public function removeApplication(Application $applications)
+    {
+        $this->applications->removeElement($applications);
+    }
+
+    /**
+     * Get applications
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getApplications()
+    {
+        return $this->applications;
     }
 }

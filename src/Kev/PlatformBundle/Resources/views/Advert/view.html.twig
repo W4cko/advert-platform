@@ -34,6 +34,17 @@
                 <li>{{ item.author }} le  {{ item.date|date('d/m/Y') }} </li>
             {% endfor %}
         </ul>
+
+    {% endif %}
+    {% if listAdvertSkills|length > 0 %}
+        <div>
+            Cette annonce a besoin des compétences suivantes :
+            <ul id="skills">
+                {% for item in listAdvertSkills %}
+                    <li>{{ item.skill.name }} : niveau {{ item.level }} </li>
+                {% endfor %}
+            </ul>
+        </div>
     {% endif %}
     <p>
         <a href="{{ path('kev_platform_home') }}" class="btn btn-default">
