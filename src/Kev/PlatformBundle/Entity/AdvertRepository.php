@@ -78,4 +78,10 @@ class AdvertRepository extends EntityRepository
             ->getResult()
             ;
     }
+
+    public  function getAdvertWithCategories()
+    {
+
+    }
+
 }
