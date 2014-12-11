@@ -79,9 +79,22 @@ class AdvertRepository extends EntityRepository
             ;
     }
 
-    public  function getAdvertWithCategories()
+    /**
+     * @param array $categoryNames
+     * @return array
+     */
+    public function getAdvertWithCategories(array $categoryNames)
     {
 
+        $qb = $this->createQueryBuilder('a');
+
+        // Join to access to c.name later
+        $qb->join('a.categories', 'c')->addSelect('c');
+
+        // expr() to construct queries
+        $qb->where($qb->expr()->in('c.name', $categoryNames));
+
+        return $qb->getQuery()->getResult();
     }
 
 }

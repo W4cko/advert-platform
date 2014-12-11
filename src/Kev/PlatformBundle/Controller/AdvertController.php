@@ -51,7 +51,7 @@ class AdvertController extends Controller
 
         // Ajout annonce
         $advert = new Advert();
-        $advert->setTitle('Recherchejobbb');
+        $advert->setTitle('Recherche jobbb de fou');
         $advert->setAuthor('Kevv');
         $advert->setContent("Nous recherchons un développeur Symfony2 débutant sur Lyon BLA");
         $date = new \DateTime();

@@ -12,4 +12,21 @@ use Doctrine\ORM\EntityRepository;
  */
 class ApplicationRepository extends EntityRepository
 {
+    /**
+     * @param $limit
+     * @return array
+     */
+    public function getLastApplicationsWithAdvert($limit)
+    {
+        $qb = $this->createQueryBuilder('app');
+
+        $qb->join('app.advert', 'adv')
+            ->select('adv');
+
+        $qb->orderBy('app.date', 'DESC')
+            ->setMaxResults($limit);
+
+        return $qb->getQuery()->getResult();
+    }
+
 }
