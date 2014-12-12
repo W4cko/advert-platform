@@ -37,7 +37,9 @@ class AdvertController extends Controller
                 array(
                     'listAdverts' => $listAdverts,
                     'nbPages'=>$nbPages,
-                    'page'=>$page));
+                    'page'=>$page
+                )
+        );
     }
 
     public function viewAction($id)
@@ -51,6 +53,7 @@ class AdvertController extends Controller
         }
         $em = $this->getDoctrine()->getManager();
         $listAdvertSkills = $em->getRepository('KevPlatformBundle:AdvertSkill')->findByAdvert($advert);
+
         return $this->render('KevPlatformBundle:Advert:view.html.twig', array(
             'advert' => $advert, 'listApplications' => $advert->getApplications(), 'listAdvertSkills' => $listAdvertSkills
         ));
@@ -58,61 +61,30 @@ class AdvertController extends Controller
 
     public function addAction(Request $request)
     {
-
-        // Ajout annonce
+        // Form
         $advert = new Advert();
-        $advert->setTitle('Recherche jobbb de fou 2');
-        $advert->setAuthor('Kevv');
-        $advert->setContent("Nous recherchons un développeur Symfony2 débutant sur Lyon BLA");
-        $date = new \DateTime();
-        $advert->setDate($date);
 
-        // ajout image
-        /*$image = new Image();
-        $image->setUrl('http://sdz-upload.s3.amazonaws.com/prod/upload/job-de-reve.jpg');
-        $image->setAlt('Job de rêve');
-        $advert->setImage($image);*/
+        $form = $this->createFormBuilder($advert)
+            ->add('date',      'date')
+            ->add('title',     'text')
+            ->add('content',   'textarea')
+            ->add('author',    'text')
+            ->add('published', 'checkbox')
+            ->add('save',      'submit')
+            ->getForm();
 
-        // Ajout skills
-        //$em = $this->getDoctrine()->getManager();
+        $form->handleRequest($request);
 
-        /*$listSkills = $em->getRepository('KevPlatformBundle:Skill')->findAll();
-        foreach ($listSkills as $skill) {
-            $advertSkill = new AdvertSkill();
-            $advertSkill->setAdvert($advert);
-            $advertSkill->setSkill($skill);
-            $advertSkill->setLevel('Expert');
-            $em->persist($advertSkill);
-
-        }*/
-
-
-        // Ajout de 2 candidatures
-        /*$application1 = new Application();
-        $application1->setAuthor('Veutjob');
-        $application1->setAdvert($advert);
-        $application1->setContent('Je veut ce boulot xd :p');
-        $application2 = new Application();
-        $application2->setAuthor('Veutjob2');
-        $application2->setAdvert($advert);
-        $application2->setContent('Je veut ce boulot :p');*/
-
-        // Entity manager
-        //$em = $this->getDoctrine()->getManager();
-
-       /* $em->persist($advert);
-        $em->persist($application2);
-        $em->persist($application1);
-
-        $em->flush();*/
-
-        if ($request->isMethod('POST')) {
+        if ($form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($advert);
+            $em->flush();
             $request->getSession()->getFlashBag()->add('notice', 'Annonce bien enregistrée.');
-            return $this->redirect($this->generateUrl('kev_platform_add', array('id' => $advert->getId())));
+
+            return $this->redirect($this->generateUrl('kev_platform_view', array('id' => $advert->getId())));
         }
 
-        // Si on n'est pas en POST, alors on affiche le formulaire
-        return $this->render('KevPlatformBundle:Advert:add.html.twig');
+        return $this->render('KevPlatformBundle:Advert:add.html.twig', array('form'=> $form->createView()));
     }
 
     public function editAction($id, Request $request)
@@ -122,44 +94,45 @@ class AdvertController extends Controller
         $advert = $em->getRepository('KevPlatformBundle:Advert')->find($id);
 
         if (null === $advert) {
-            throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
+            $this->createNotFoundException("L'annonce d'id ".$id." n'existe pas.");
         }
 
-        /*$listCategories = $em->getRepository('KevPlatformBundle:Category')->findAll();
+        $form = $this->createFormBuilder($advert)
+            ->add('date',      'date')
+            ->add('title',     'text')
+            ->add('content',   'textarea')
+            ->add('author',    'text')
+            ->add('published', 'checkbox')
+            ->add('save',      'submit')
+            ->getForm();
 
-        foreach ($listCategories as $category) {
-            $advert->addCategory($category);
-        }
+        $form->handleRequest($request);
 
-        $em->flush();*/
-
-        if ($request->isMethod('POST')) {
+        if ($form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($advert);
+            $em->flush();
             $request->getSession()->getFlashBag()->add('notice', 'Annonce bien modifiée.');
 
-            return $this->redirect($this->generateUrl('oc_platform_view'));
+            return $this->redirect($this->generateUrl('kev_platform_view', array('id' => $advert->getId())));
+
         }
 
         return $this->render('KevPlatformBundle:Advert:edit.html.twig',array(
-        'advert' => $advert,'id' => $id));
+        'advert' => $advert,'id' => $id,'form' => $form->createView()));
     }
 
     public function deleteAction($id)
     {
         $em = $this->getDoctrine()->getManager();
 
-
         $advert = $em->getRepository('KevPlatformBundle:Advert')->find($id);
-
-
 
         if (null === $advert) {
             throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
         }
-        $em->remove($advert);
-       /* foreach ($advert->getCategories() as $category) {
-            $advert->removeCategory($category);
-        }*/
 
+        $em->remove($advert);
         $em->flush();
 
         return $this->render('KevPlatformBundle:Advert:edit.html.twig',array(
