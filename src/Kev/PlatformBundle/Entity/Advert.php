@@ -90,6 +90,11 @@ class Advert
     private $slug;
 
     /**
+     * @ORM\OneToMany(targetEntity="Kev\PlatformBundle\Entity\AdvertSkill", mappedBy="advert")
+     */
+    private $advertSkills;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -97,6 +102,7 @@ class Advert
         $this->date = new \Datetime();
         $this->categories = new ArrayCollection();
         $this->applications = new ArrayCollection();
+        $this->advertSkills = new ArrayCollection();
     }
 
 
@@ -295,9 +301,9 @@ class Advert
      *
      * @param \Kev\PlatformBundle\Entity\Application $applications
      */
-    public function removeApplication(Application $applications)
+    public function removeApplication(Application $application)
     {
-        $this->applications->removeElement($applications);
+        $this->applications->removeElement($application);
     }
 
     /**
@@ -397,5 +403,38 @@ class Advert
     public function getSlug()
     {
         return $this->slug;
+    }
+
+    /**
+     * Add advertSkills
+     *
+     * @param AdvertSkill $advertSkill
+     * @return Advert
+     */
+    public function addAdvertSkill(AdvertSkill $advertSkill)
+    {
+        $this->advertSkills[] = $advertSkill;
+        $advertSkill->setAdvert($this);
+        return $this;
+    }
+
+    /**
+     * Remove advertSkills
+     *
+     * @param AdvertSkill $advertSkill
+     */
+    public function removeAdvertSkill(AdvertSkill $advertSkill)
+    {
+        $this->advertSkills->removeElement($advertSkill);
+    }
+
+    /**
+     * Get advertSkills
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getAdvertSkills()
+    {
+        return $this->advertSkills;
     }
 }

@@ -30,7 +30,7 @@ class AdvertSkill
 
     /**
      *
-     * @ORM\ManyToOne(targetEntity="Kev\PlatformBundle\Entity\Advert")
+     * @ORM\ManyToOne(targetEntity="Kev\PlatformBundle\Entity\Advert", inversedBy="advertSkills")
      * @ORM\JoinColumn(nullable=false)
      */
     private $advert;
@@ -56,13 +56,10 @@ class AdvertSkill
      * Set level
      *
      * @param string $level
-     * @return AdvertSkill
      */
     public function setLevel($level)
     {
         $this->level = $level;
-
-        return $this;
     }
 
     /**

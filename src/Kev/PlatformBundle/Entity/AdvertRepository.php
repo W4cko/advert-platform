@@ -97,4 +97,22 @@ class AdvertRepository extends EntityRepository
         return $qb->getQuery()->getResult();
     }
 
+    /**
+     * Get adverts ordered by date
+     * @return array
+     */
+    public function getAdverts()
+    {
+        $qb = $this->createQueryBuilder('a');
+
+        $qb->leftjoin('a.image', 'i')
+            ->addSelect('i')
+            ->leftjoin('a.categories','c')
+            ->addSelect('c')
+            ->leftJoin('a.advertSkills','advs')
+            ->addSelect('advs')
+            ->orderBy('a.date', 'DESC');
+
+        return $qb->getQuery()->getResult();
+    }
 }

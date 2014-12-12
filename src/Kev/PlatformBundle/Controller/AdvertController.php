@@ -22,27 +22,24 @@ class AdvertController extends Controller
         }
 
         $em = $this->getDoctrine()->getManager();
-        $listAdverts = $em->getRepository('KevPlatformBundle:Advert')->findAll();
+        $listAdverts = $em->getRepository('KevPlatformBundle:Advert')->getAdverts();
 
         return $this->render('KevPlatformBundle:Advert:index.html.twig', array('listAdverts' => $listAdverts));
     }
 
     public function viewAction($id)
     {
-        $repository = $this->getDoctrine()->getManager()->getRepository('KevPlatformBundle:Advert');
+        $em = $this->getDoctrine()->getManager();
 
-        $advert = $repository->find($id);
+        $advert = $em->getRepository('KevPlatformBundle:Advert')->find($id);
 
         if (null === $advert){
             throw new NotFoundHttpException("L'annonce demandée (".$id.")n'existe pas");
         }
         $em = $this->getDoctrine()->getManager();
-        $listApplications = $em->getRepository('KevPlatformBundle:Application')->findBy(array('advert' => $advert));
-        // Horrible car on fait une requete par iteration, methode pour l'exemple...
-        $listAdvertSkills = $em->getRepository('KevPlatformBundle:AdvertSkill')->findBy(array('advert' => $advert));
-
+        $listAdvertSkills = $em->getRepository('KevPlatformBundle:AdvertSkill')->findByAdvert($advert);
         return $this->render('KevPlatformBundle:Advert:view.html.twig', array(
-            'advert' => $advert, 'listApplications' => $listApplications, 'listAdvertSkills' => $listAdvertSkills
+            'advert' => $advert, 'listApplications' => $advert->getApplications(), 'listAdvertSkills' => $listAdvertSkills
         ));
     }
 
@@ -51,22 +48,22 @@ class AdvertController extends Controller
 
         // Ajout annonce
         $advert = new Advert();
-        $advert->setTitle('Recherche jobbb de fou');
+        $advert->setTitle('Recherche jobbb de fou 2');
         $advert->setAuthor('Kevv');
         $advert->setContent("Nous recherchons un développeur Symfony2 débutant sur Lyon BLA");
         $date = new \DateTime();
         $advert->setDate($date);
 
         // ajout image
-        $image = new Image();
+        /*$image = new Image();
         $image->setUrl('http://sdz-upload.s3.amazonaws.com/prod/upload/job-de-reve.jpg');
         $image->setAlt('Job de rêve');
-        $advert->setImage($image);
+        $advert->setImage($image);*/
 
         // Ajout skills
-        $em = $this->getDoctrine()->getManager();
+        //$em = $this->getDoctrine()->getManager();
 
-        $listSkills = $em->getRepository('KevPlatformBundle:Skill')->findAll();
+        /*$listSkills = $em->getRepository('KevPlatformBundle:Skill')->findAll();
         foreach ($listSkills as $skill) {
             $advertSkill = new AdvertSkill();
             $advertSkill->setAdvert($advert);
@@ -74,27 +71,27 @@ class AdvertController extends Controller
             $advertSkill->setLevel('Expert');
             $em->persist($advertSkill);
 
-        }
+        }*/
 
 
         // Ajout de 2 candidatures
-        $application1 = new Application();
+        /*$application1 = new Application();
         $application1->setAuthor('Veutjob');
         $application1->setAdvert($advert);
         $application1->setContent('Je veut ce boulot xd :p');
         $application2 = new Application();
         $application2->setAuthor('Veutjob2');
         $application2->setAdvert($advert);
-        $application2->setContent('Je veut ce boulot :p');
+        $application2->setContent('Je veut ce boulot :p');*/
 
         // Entity manager
-        $em = $this->getDoctrine()->getManager();
+        //$em = $this->getDoctrine()->getManager();
 
-        $em->persist($advert);
+       /* $em->persist($advert);
         $em->persist($application2);
         $em->persist($application1);
 
-        $em->flush();
+        $em->flush();*/
 
         if ($request->isMethod('POST')) {
             $request->getSession()->getFlashBag()->add('notice', 'Annonce bien enregistrée.');
@@ -115,13 +112,13 @@ class AdvertController extends Controller
             throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
         }
 
-        $listCategories = $em->getRepository('KevPlatformBundle:Category')->findAll();
+        /*$listCategories = $em->getRepository('KevPlatformBundle:Category')->findAll();
 
         foreach ($listCategories as $category) {
             $advert->addCategory($category);
         }
 
-        $em->flush();
+        $em->flush();*/
 
         if ($request->isMethod('POST')) {
             $request->getSession()->getFlashBag()->add('notice', 'Annonce bien modifiée.');
@@ -137,15 +134,18 @@ class AdvertController extends Controller
     {
         $em = $this->getDoctrine()->getManager();
 
+
         $advert = $em->getRepository('KevPlatformBundle:Advert')->find($id);
+
+
 
         if (null === $advert) {
             throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
         }
-
-        foreach ($advert->getCategories() as $category) {
+        $em->remove($advert);
+       /* foreach ($advert->getCategories() as $category) {
             $advert->removeCategory($category);
-        }
+        }*/
 
         $em->flush();
 
