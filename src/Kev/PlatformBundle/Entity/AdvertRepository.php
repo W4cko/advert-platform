@@ -4,6 +4,8 @@ namespace Kev\PlatformBundle\Entity;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
+use Doctrine\ORM\Tools\Pagination\Paginator;
+
 
 /**
  * AdvertRepository
@@ -17,10 +19,6 @@ class AdvertRepository extends EntityRepository
      * Training, same result of the findAll() method
      */
     public function myFindAll(){
-        // Use first letter from the Entity
-        // Method 1
-        // $queryBuilder = $this->_em->createQueryBuilder()->select('a')->from($this->_entityName, 'a');
-
         // Method 2 better than the previous
         $queryBuilder = $this->createQueryBuilder('a');
 
@@ -99,20 +97,27 @@ class AdvertRepository extends EntityRepository
 
     /**
      * Get adverts ordered by date
+     * @param $page
+     * @param $nbPerPage
      * @return array
      */
-    public function getAdverts()
+    public function getAdverts($page, $nbPerPage)
     {
         $qb = $this->createQueryBuilder('a');
 
-        $qb->leftjoin('a.image', 'i')
+        $query = $qb->leftjoin('a.image', 'i')
             ->addSelect('i')
             ->leftjoin('a.categories','c')
             ->addSelect('c')
             ->leftJoin('a.advertSkills','advs')
             ->addSelect('advs')
-            ->orderBy('a.date', 'DESC');
+            ->orderBy('a.date', 'DESC')
+            ->getQuery();
 
-        return $qb->getQuery()->getResult();
+        $query
+            ->setFirstResult(($page-1) * $nbPerPage)
+            ->setMaxResults($nbPerPage);
+        return new Paginator($query,true);
+
     }
 }

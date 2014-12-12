@@ -18,13 +18,26 @@ class AdvertController extends Controller
     public function indexAction($page)
     {
         if ($page < 1) {
-            throw new NotFoundHttpException('Page "'.$page.'" inexistante.');
+            throw $this->createNotFoundException('Page "'.$page.'" inexistante.');
         }
+        // Getting nb_per_page in app/config/parameters.yml
+        $nbPerPage = $this->container->getParameter('nb_per_page');
 
         $em = $this->getDoctrine()->getManager();
-        $listAdverts = $em->getRepository('KevPlatformBundle:Advert')->getAdverts();
 
-        return $this->render('KevPlatformBundle:Advert:index.html.twig', array('listAdverts' => $listAdverts));
+        $listAdverts = $em->getRepository('KevPlatformBundle:Advert')->getAdverts($page, $nbPerPage);
+
+        $nbPages = ceil(count($listAdverts)/$nbPerPage);
+
+        if ($page > $nbPages) {
+            throw $this->createNotFoundException("La page ".$page." n'existe pas.");
+        }
+
+        return $this->render('KevPlatformBundle:Advert:index.html.twig',
+                array(
+                    'listAdverts' => $listAdverts,
+                    'nbPages'=>$nbPages,
+                    'page'=>$page));
     }
 
     public function viewAction($id)
