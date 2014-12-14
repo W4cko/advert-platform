@@ -135,7 +135,7 @@ class AdvertController extends Controller
         $em->remove($advert);
         $em->flush();
 
-        return $this->render('KevPlatformBundle:Advert:edit.html.twig',array(
+        return $this->render('KevPlatformBundle:Advert:index.html.twig',array(
             'advert' => $advert,'id' => $id));
     }
 
