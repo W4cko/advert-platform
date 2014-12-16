@@ -7,6 +7,8 @@ namespace Kev\PlatformBundle\Controller;
 use Kev\PlatformBundle\Entity\AdvertSkill;
 use Kev\PlatformBundle\Entity\Application;
 use Kev\PlatformBundle\Entity\Image;
+use Kev\PlatformBundle\Form\AdvertEditType;
+use Kev\PlatformBundle\Form\AdvertType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -29,7 +31,7 @@ class AdvertController extends Controller
 
         $nbPages = ceil(count($listAdverts)/$nbPerPage);
 
-        if ($page > $nbPages) {
+        if ($page > $nbPages && $page !== 1) {
             throw $this->createNotFoundException("La page ".$page." n'existe pas.");
         }
 
@@ -64,14 +66,7 @@ class AdvertController extends Controller
         // Form
         $advert = new Advert();
 
-        $form = $this->createFormBuilder($advert)
-            ->add('date',      'date')
-            ->add('title',     'text')
-            ->add('content',   'textarea')
-            ->add('author',    'text')
-            ->add('published', 'checkbox')
-            ->add('save',      'submit')
-            ->getForm();
+        $form = $this->createForm(new AdvertType(), $advert);
 
         $form->handleRequest($request);
 
@@ -97,20 +92,12 @@ class AdvertController extends Controller
             $this->createNotFoundException("L'annonce d'id ".$id." n'existe pas.");
         }
 
-        $form = $this->createFormBuilder($advert)
-            ->add('date',      'date')
-            ->add('title',     'text')
-            ->add('content',   'textarea')
-            ->add('author',    'text')
-            ->add('published', 'checkbox')
-            ->add('save',      'submit')
-            ->getForm();
+        $form = $this->get('form.factory')->create(new AdvertEditType(), $advert);
+
 
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($advert);
             $em->flush();
             $request->getSession()->getFlashBag()->add('notice', 'Annonce bien modifiée.');
 
@@ -119,10 +106,10 @@ class AdvertController extends Controller
         }
 
         return $this->render('KevPlatformBundle:Advert:edit.html.twig',array(
-        'advert' => $advert,'id' => $id,'form' => $form->createView()));
+        'advert' => $advert,'form' => $form->createView()));
     }
 
-    public function deleteAction($id)
+    public function deleteAction($id, Request $request)
     {
         $em = $this->getDoctrine()->getManager();
 
@@ -132,11 +119,17 @@ class AdvertController extends Controller
             throw new NotFoundHttpException("L'annonce d'id ".$id." n'existe pas.");
         }
 
-        $em->remove($advert);
-        $em->flush();
+        $form = $this->createFormBuilder()->getForm();
 
-        return $this->render('KevPlatformBundle:Advert:index.html.twig',array(
-            'advert' => $advert,'id' => $id));
+        if ($form->handleRequest($request)->isValid()){
+            $em->remove($advert);
+            $em->flush();
+            $request->getSession()->getFlashBag()->add('info', 'Annonce bien supprimée.');
+            return $this->redirect($this->generateUrl('kev_platform_home'));
+        }
+
+        return $this->render('KevPlatformBundle:Advert:delete.html.twig',array(
+            'advert' => $advert,'form' => $form->createView()));
     }
 
     public function menuAction()

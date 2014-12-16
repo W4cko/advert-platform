@@ -33,7 +33,7 @@ class Advert
     private $date;
 
     /**
-     * @ORM\OneToOne(targetEntity="Kev\PlatformBundle\Entity\Image", cascade={"persist"})
+     * @ORM\OneToOne(targetEntity="Kev\PlatformBundle\Entity\Image", cascade={"persist", "remove"})
      *
      */
     private $image;
