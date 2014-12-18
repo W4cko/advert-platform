@@ -5,6 +5,10 @@ namespace Kev\PlatformBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
+use Gedmo\ReferenceIntegrity\Mapping\Validator;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Kev\PlatformBundle\Validator\Antiflood;
 
 
 /**
@@ -12,6 +16,7 @@ use Gedmo\Mapping\Annotation as Gedmo;
  *
  * @ORM\Table()
  * @ORM\Entity(repositoryClass="Kev\PlatformBundle\Entity\AdvertRepository")
+ * @UniqueEntity(fields="title", message="Une annonce existe déjà avec ce titre.")
  * @ORM\HasLifecycleCallbacks()
  */
 class Advert
@@ -29,6 +34,7 @@ class Advert
      * @var \DateTime
      *
      * @ORM\Column(name="date", type="datetime")
+     * @Assert\DateTime()
      */
     private $date;
 
@@ -39,6 +45,7 @@ class Advert
     private $image;
     /**
      * @ORM\ManyToMany(targetEntity="Kev\PlatformBundle\Entity\Category", cascade={"persist"})
+     * @Assert\Valid()
      */
     private $categories;
 
@@ -50,7 +57,8 @@ class Advert
     /**
      * @var string
      *
-     * @ORM\Column(name="title", type="string", length=255)
+     * @ORM\Column(name="title", type="string", length=255, unique=true)
+     * @Assert\Length(min = "10", minMessage = "Votre titre doit faire au moins {{ limit }} caractères")
      */
     private $title;
 
@@ -58,6 +66,7 @@ class Advert
      * @var string
      *
      * @ORM\Column(name="author", type="string", length=255)
+     * @Assert\Length(min = "2", minMessage = "Votre nom doit faire au moins {{ limit }} caractères")
      */
     private $author;
 
@@ -65,6 +74,9 @@ class Advert
      * @var string
      *
      * @ORM\Column(name="content", type="text")
+     * @Assert\NotBlank()
+     * @Antiflood()
+     *
      */
     private $content;
 

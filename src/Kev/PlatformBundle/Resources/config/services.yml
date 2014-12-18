@@ -5,7 +5,12 @@ services:
         class:     Kev\PlatformBundle\Antispam\KevAntispam
         arguments: [@mailer, %locale%, 50]
     kev_platform.doctrine.notification:
-            class:     Kev\PlatformBundle\DoctrineListener\ApplicationNotification
-            arguments: [@mailer]
-            tags:
+        class:     Kev\PlatformBundle\DoctrineListener\ApplicationNotification
+        arguments: [@mailer]
+        tags:
               - { name: doctrine.event_listener, event: postPersist }
+    kev_platform.validator.antiflood:
+        class:    Kev\PlatformBundle\Validator\Antiflood
+        arguments:  [@request_stack, @doctrine.orm.entity_manager]
+        tags:
+          - { name: validator.constraint_validator, alias: kev_platform_antiflood }
