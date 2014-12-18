@@ -8,7 +8,7 @@ services:
         class:     Kev\PlatformBundle\DoctrineListener\ApplicationNotification
         arguments: [@mailer]
         tags:
-              - { name: doctrine.event_listener, event: postPersist }
+          - { name: doctrine.event_listener, event: postPersist }
     kev_platform.validator.antiflood:
         class:    Kev\PlatformBundle\Validator\Antiflood
         arguments:  [@request_stack, @doctrine.orm.entity_manager]
