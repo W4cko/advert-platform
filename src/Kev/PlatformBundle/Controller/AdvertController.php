@@ -15,6 +15,8 @@ use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Kev\PlatformBundle\Entity\Advert;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 use Symfony\Component\Security\Core\Exception\AccountExpiredException;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Security;
+
 
 
 class AdvertController extends Controller
@@ -63,12 +65,13 @@ class AdvertController extends Controller
         ));
     }
 
+    /**
+     * @Security("has_role('ROLE_AUTEUR')")
+     * @param $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
     public function addAction(Request $request)
     {
-
-        if(!$this->get('security.context')->isGranted('ROLE_AUTEUR')){
-            throw new AccessDeniedException('Acces restreint aux auteurs');
-        }
 
         $advert = new Advert();
 
