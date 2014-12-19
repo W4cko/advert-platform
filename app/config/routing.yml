@@ -1,4 +1,12 @@
 kev_platform:
     resource: "@KevPlatformBundle/Resources/config/routing.yml"
     prefix:   /platform
+login:
+    pattern:   /login
+    defaults:  { _controller: KevUserBundle:Security:login }
 
+login_check:
+    pattern:   /login_check
+
+logout:
+    pattern:   /logout

@@ -19,6 +19,7 @@ class AppKernel extends Kernel
             new Kev\PlatformBundle\KevPlatformBundle(),
             new Doctrine\Bundle\FixturesBundle\DoctrineFixturesBundle(),
             new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
+            new Kev\UserBundle\KevUserBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
