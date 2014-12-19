@@ -13,6 +13,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Kev\PlatformBundle\Entity\Advert;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
+use Symfony\Component\Security\Core\Exception\AccountExpiredException;
 
 
 class AdvertController extends Controller
@@ -63,7 +65,11 @@ class AdvertController extends Controller
 
     public function addAction(Request $request)
     {
-        // Form
+
+        if(!$this->get('security.context')->isGranted('ROLE_AUTEUR')){
+            throw new AccessDeniedException('Acces restreint aux auteurs');
+        }
+
         $advert = new Advert();
 
         $form = $this->createForm(new AdvertType(), $advert);
