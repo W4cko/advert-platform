@@ -19,6 +19,7 @@
         "doctrine/doctrine-fixtures-bundle": "~2.2",
         "sensio/framework-extra-bundle": "~3.0",
         "incenteev/composer-parameter-handler": "~2.0",
+        "friendsofsymfony/user-bundle": "dev-master",
         "stof/doctrine-extensions-bundle": "~1.1"
     },
     "require-dev": {

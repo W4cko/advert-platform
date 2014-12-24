@@ -10,7 +10,7 @@ services:
         tags:
           - { name: doctrine.event_listener, event: postPersist }
     kev_platform.validator.antiflood:
-        class:    Kev\PlatformBundle\Validator\Antiflood
+        class:    Kev\PlatformBundle\Validator\AntifloodValidator
         arguments:  [@request_stack, @doctrine.orm.entity_manager]
         tags:
           - { name: validator.constraint_validator, alias: kev_platform_antiflood }

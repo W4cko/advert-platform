@@ -20,7 +20,12 @@ class AntifloodValidator extends ConstraintValidator
         $this->em = $em;
     }
 
-    public function validate($value, Constraint $constraint)
+    public  function validate($value, Constraint $constraint){
+    }
+
+    //Example commented to run test
+
+    /*public function validate($value, Constraint $constraint)
     {
         $request = $this->requestStack->getCurrentRequest();
 
@@ -28,12 +33,12 @@ class AntifloodValidator extends ConstraintValidator
 
         $isFlood = $this->em
             ->getRepository('KevPlatformBundle:Application')
-            ->isFlood($ip, 15);
+            -isFlood($ip, 15);
 
-        if ($isFlood){
-            $this->context->addViolation($constraint->message);
-        }
-    }
+            if ($isFlood){
+                $this->context->addViolation($constraint->message);
+            }
+    }*/
 
     /**
      * Only Example

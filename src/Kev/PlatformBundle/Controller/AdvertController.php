@@ -91,6 +91,12 @@ class AdvertController extends Controller
         return $this->render('KevPlatformBundle:Advert:add.html.twig', array('form'=> $form->createView()));
     }
 
+    /**
+     * @param $id
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @Security("has_role('ROLE_ADMIN')")
+     */
     public function editAction($id, Request $request)
     {
         $em = $this->getDoctrine()->getManager();
